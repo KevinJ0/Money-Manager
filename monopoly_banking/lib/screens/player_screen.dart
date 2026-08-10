@@ -120,6 +120,11 @@ class _PlayerScreenState extends State<PlayerScreen>
     }
   }
 
+  void _closeOpenDialogs() {
+    final navigator = Navigator.of(context, rootNavigator: true);
+    navigator.popUntil((route) => route.isFirst);
+  }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);

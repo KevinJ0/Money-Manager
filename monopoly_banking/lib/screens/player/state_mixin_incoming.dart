@@ -29,7 +29,7 @@ mixin _PlayerIncoming on State<PlayerScreen> {
           _self._userRequestedWsDisconnect = false;
         }
         if (mounted) {
-          Navigator.of(context, rootNavigator: true).maybePop();
+          _self._closeOpenDialogs();
         }
         await session.clearSession();
         if (mounted) {
@@ -166,6 +166,7 @@ mixin _PlayerIncoming on State<PlayerScreen> {
         _self._userRequestedWsDisconnect = true;
         await P2PService().wsTransport.stop();
         if (!mounted) return;
+        _self._closeOpenDialogs();
         _self._safeSetState(() {});
         Navigator.of(context).pushReplacement(
           GameFadeRoute(
@@ -181,6 +182,7 @@ mixin _PlayerIncoming on State<PlayerScreen> {
         _self._userRequestedWsDisconnect = true;
         await P2PService().wsTransport.stop();
         if (!mounted) return;
+        _self._closeOpenDialogs();
         _self._safeSetState(() {});
         Navigator.of(context).push(
           GameFadeRoute(

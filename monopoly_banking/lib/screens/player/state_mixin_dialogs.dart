@@ -239,6 +239,7 @@ mixin _PlayerDialogs on State<PlayerScreen> {
     if (_self._bankruptcyScreenOpen || !mounted) return;
     final session = context.read<SessionProvider>();
     _self._bankruptcyScreenOpen = true;
+    _self._closeOpenDialogs();
     unawaited(
       Navigator.of(context)
           .push<void>(

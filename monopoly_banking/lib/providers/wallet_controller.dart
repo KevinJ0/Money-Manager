@@ -148,8 +148,14 @@ class WalletController extends ChangeNotifier {
           HapticFeedback.heavyImpact();
           SoundService.playSadTrombone();
         }
+        final isBankCharge = eventType == 'charge' ||
+            eventType == 'bank_charge_received' ||
+            eventType == 'sync_debit' ||
+            eventType == 'bank_sync_debit';
         NotificationService().show(
-            'Transferiste ${formatMoney(amount)}',
+            isBankCharge
+                ? 'Debitado ${formatMoney(amount)}'
+                : 'Transferiste ${formatMoney(amount)}',
             backgroundColor: kRed);
       }
     }
