@@ -2,9 +2,6 @@ name: Android Release (GitHub)
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - "android-v*"
 
 env:
   SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
