@@ -1,7 +1,7 @@
 # Money Manager
 
 <p align="center">
-  <img src="assets/icon/app_icon.png" alt="Money Manager" width="120" height="120">
+  <img src="monopoly_banking/assets/icon/app_icon.png" alt="Money Manager" width="120" height="120">
 </p>
 
 **Money Manager** es una aplicación de **banca digital P2P offline** para jugar juegos de mesa (Money Manager, Monopoly y variantes) con dinero virtual. Funciona **sin internet**: los jugadores conectan sus celulares a un dispositivo central ("el Banco") y gestionan saldos, transferencias, inversiones y premios en tiempo real.
