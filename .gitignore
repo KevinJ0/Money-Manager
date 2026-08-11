@@ -1,0 +1,9 @@
+# Volcados de consola de flutter run
+flutter_run_error.txt
+flutter_run_output.txt
+
+# Backups de código local
+ws_connect_button_original.dart
+
+# Artefactos generados por el SDK nativo de Sentry (crashpad)
+.sentry-native/

@@ -51,9 +51,12 @@ app.*.map.json
 
 sentry.properties
 
-# Instalador Windows generado (no commitear el .exe, solo el script .iss)
-/windows/installer/
-
-
 # Artefactos generados por el SDK nativo de Sentry (crashpad)
 .sentry-native/
+
+# Logs y artefactos de build locales
+build_log.txt
+android/build/reports/
+
+# Instalador Windows generado (no commitear el .exe, solo el script .iss)
+/windows/installer/
