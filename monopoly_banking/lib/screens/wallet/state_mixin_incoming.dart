@@ -68,7 +68,7 @@ mixin _WalletIncoming on State<WalletScreen> {
                 name: storedName,
                 avatarId: deviceAccount.avatarId.isNotEmpty
                     ? deviceAccount.avatarId
-                    : (payload['avatarId'] ?? 'ðŸ‘¤'),
+                    : (payload['avatarId'] ?? '👤'),
                 colorId: deviceAccount.colorId.isNotEmpty
                     ? deviceAccount.colorId
                     : (payload['colorId'] ?? '0'),
@@ -80,7 +80,7 @@ mixin _WalletIncoming on State<WalletScreen> {
               'targetInstallationId': deviceInstallationId,
               'avatarId': deviceAccount.avatarId.isNotEmpty
                   ? deviceAccount.avatarId
-                  : (payload['avatarId'] ?? 'ðŸ‘¤'),
+                  : (payload['avatarId'] ?? '👤'),
               'colorId': deviceAccount.colorId.isNotEmpty
                   ? deviceAccount.colorId
                   : (payload['colorId'] ?? '0'),

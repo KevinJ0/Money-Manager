@@ -641,7 +641,7 @@ mixin _BankDialogs on State<BankScreen> {
                             'playerId': player.displayName,
                           });
                         } on TransportUnavailableException {
-                          // El jugador ya se desconectó â€” fue expulsado igual.
+                          // El jugador ya se desconectó — fue expulsado igual.
                         }
                       },
                       icon: const Icon(Icons.gavel_rounded, size: 18),

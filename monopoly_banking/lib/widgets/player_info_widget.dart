@@ -68,7 +68,7 @@ class PlayerInfoView extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      player.avatarId.isNotEmpty ? player.avatarId : 'ðŸ‘¤',
+                      player.avatarId.isNotEmpty ? player.avatarId : '👤',
                       style: const TextStyle(fontSize: 24),
                     ),
                   ),
@@ -103,7 +103,7 @@ class PlayerInfoView extends StatelessWidget {
           const SizedBox(height: 16),
           _buildStatsGrid(),
           const SizedBox(height: 16),
-          _buildSectionHeader('Ãšltimas Transacciones'),
+          _buildSectionHeader('Últimas Transacciones'),
           ...transactions.map((tx) => _buildTxTile(tx)),
         ],
       ),
@@ -121,7 +121,7 @@ class PlayerInfoView extends StatelessWidget {
       leading: Icon(icon, color: _txColor(type), size: 20),
       title: Text(label, style: const TextStyle(color: kTextPrimary, fontSize: 13)),
       subtitle: Text(
-        '${type.startsWith('withdraw') || type.startsWith('charge') ? '-' : '+'}${formatMoney(amount)}  â†’  ${formatMoney(balanceAfter)}',
+        '${type.startsWith('withdraw') || type.startsWith('charge') ? '-' : '+'}${formatMoney(amount)}  →  ${formatMoney(balanceAfter)}',
         style: const TextStyle(color: kTextSecondary, fontSize: 11),
       ),
     );

@@ -7,7 +7,7 @@ import 'package:money_manager/services/app_audit_logger.dart';
 import 'package:money_manager/services/notification_service.dart';
 import 'package:money_manager/core/game_transitions.dart';
 
-// â”€â”€â”€ Modelo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Modelo ────────────────────────────────────────────────────────────
 
 enum ErrorSeverity { info, warning, error, critical }
 
@@ -17,7 +17,7 @@ class FriendlyError {
   const FriendlyError({required this.message, required this.severity});
 }
 
-// â”€â”€â”€ Servicio principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Servicio principal ────────────────────────────────────────────────
 
 class ErrorTranslatorService {
   static final ErrorTranslatorService _instance = ErrorTranslatorService._();
@@ -27,14 +27,14 @@ class ErrorTranslatorService {
   final Map<String, FriendlyError> _cache = {};
   GenerativeModel? _model;
 
-  // âš ï¸ Pon tu API key de Google AI Studio aquí:
+  // ⚠️ Pon tu API key de Google AI Studio aquí:
   // https://aistudio.google.com/app/apikey
   static const _apiKey = String.fromEnvironment(
     'GEMINI_API_KEY',
     defaultValue: '',
   );
 
-  // â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Init ─────────────────────────────────────────────────────────
 
   Future<void> init() async {
     if (_apiKey.isNotEmpty) {
@@ -49,7 +49,7 @@ class ErrorTranslatorService {
     }
   }
 
-  // â”€â”€ API pública â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── API pública ──────────────────────────────────────────────────
 
   /// Traduce un error técnico a lenguaje humano.
   /// Primero busca en caché SQLite; si no existe, llama a Gemini y lo guarda.
@@ -79,7 +79,7 @@ class ErrorTranslatorService {
     return friendly;
   }
 
-  // â”€â”€ Normalización â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Normalización ────────────────────────────────────────────────
 
   /// Elimina partes dinámicas (direcciones de memoria, timestamps, IDs)
   /// para que errores equivalentes compartan la misma key.
@@ -97,7 +97,7 @@ class ErrorTranslatorService {
     return sha256.convert(bytes).toString();
   }
 
-  // â”€â”€ Caché en memoria â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Caché en memoria ─────────────────────────────────────────────
 
   Future<FriendlyError?> _lookup(String key) async {
     return _cache[key];
@@ -107,7 +107,7 @@ class ErrorTranslatorService {
     _cache[key] = friendly;
   }
 
-  // â”€â”€ Gemini AI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Gemini AI ────────────────────────────────────────────────────
 
   Future<FriendlyError> _askAI(String raw, StackTrace? stack) async {
     if (_model == null) return _fallback(raw);
@@ -149,7 +149,7 @@ Responde EXACTAMENTE así:
     }
   }
 
-  // â”€â”€ Fallback sin IA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Fallback sin IA ──────────────────────────────────────────────
 
   FriendlyError _fallback(String raw) {
     final lower = raw.toLowerCase();
@@ -221,12 +221,12 @@ Responde EXACTAMENTE así:
   Future<int> cacheSize() async => _cache.length;
 }
 
-// â”€â”€â”€ Extension: mostrar errores desde cualquier widget â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Extension: mostrar errores desde cualquier widget ─────────────────
 
 extension FriendlyErrorDisplay on BuildContext {
   /// Traduce el error y lo muestra según severidad:
-  /// - info/warning â†’ SnackBar
-  /// - error/critical â†’ Dialog
+  /// - info/warning → SnackBar
+  /// - error/critical → Dialog
   Future<void> showFriendlyError(dynamic error, [StackTrace? stack]) async {
     final friendly = await ErrorTranslatorService().translate(error, stack);
     if (!mounted) return;
@@ -286,7 +286,7 @@ extension FriendlyErrorDisplay on BuildContext {
   }
 }
 
-// â”€â”€â”€ Wrapper para try/catch automático â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Wrapper para try/catch automático ─────────────────────────────────
 
 /// Ejecuta [action] y si falla, traduce el error y lo muestra al usuario.
 /// Retorna el resultado o null si hubo error.

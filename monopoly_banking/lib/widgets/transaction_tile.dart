@@ -50,7 +50,7 @@ class TransactionTile extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          tx.counterpartyId?.trim().isNotEmpty == true ? '${tx.counterpartyId} Â· ${_formatDate(tx.timestamp)}' : _formatDate(tx.timestamp),
+          tx.counterpartyId?.trim().isNotEmpty == true ? '${tx.counterpartyId} · ${_formatDate(tx.timestamp)}' : _formatDate(tx.timestamp),
           style: const TextStyle(color: kTextSecondary, fontSize: 12),
         ),
         trailing: Text(

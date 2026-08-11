@@ -93,7 +93,7 @@ class AppAuditLogger {
     final ms = duration.inMilliseconds;
     final buf = StringBuffer(
         '[$ts][${op?.category ?? '?'}][END  ] ${op?.action ?? '?'} (${ms}ms)');
-    if (result != null) buf.write(' â†’ $result');
+    if (result != null) buf.write(' → $result');
     if (error != null) buf.write('\n  ERROR: $error');
     if (stack != null) buf.write('\n  STACK: $stack');
     buf.write('\n');
@@ -111,7 +111,7 @@ class AppAuditLogger {
   }
 
   /// Registra un error/exception de forma estructurada.
-  /// Ãštil para capturar errores globales o errores traducidos al usuario.
+  /// Útil para capturar errores globales o errores traducidos al usuario.
   void error(String module, Object error,
       {StackTrace? stack, Map<String, dynamic>? data}) {
     event(

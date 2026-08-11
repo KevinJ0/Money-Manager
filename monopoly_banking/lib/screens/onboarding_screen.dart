@@ -543,7 +543,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // â”€â”€â”€ Color page widgets â”€â”€â”€
+  // ─── Color page widgets ───
 
   Widget _buildColorLabel() {
     final label = _colorLabels[_selectedColorIndex] ?? '';
@@ -799,7 +799,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   );
 }
 
-  // â”€â”€â”€ Name page widgets â”€â”€â”€
+  // ─── Name page widgets ───
 
   Widget _buildTextField() {
     return Column(
@@ -975,7 +975,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // â”€â”€â”€ Avatar page widgets â”€â”€â”€
+  // ─── Avatar page widgets ───
 
   Widget _buildAvatarPreview() {
     return Column(
