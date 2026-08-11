@@ -57,10 +57,6 @@ Future<void> runAppWithSentry() async {
         'silent': details.silent,
       },
     );
-    Sentry.captureException(
-      details.exception,
-      stackTrace: details.stack,
-    );
     FlutterError.dumpErrorToConsole(details);
   };
 
@@ -70,7 +66,6 @@ Future<void> runAppWithSentry() async {
       error,
       stack: stack,
     );
-    Sentry.captureException(error, stackTrace: stack);
     return true;
   };
 
@@ -82,7 +77,6 @@ Future<void> runAppWithSentry() async {
     AppAuditLogger.instance.event('APP', 'initialized');
   } catch (e, stack) {
     AppAuditLogger.instance.error('APP_INIT', e, stack: stack);
-    Sentry.captureException(e, stackTrace: stack);
     rethrow;
   }
 

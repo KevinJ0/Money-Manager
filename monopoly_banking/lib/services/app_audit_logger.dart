@@ -1,8 +1,5 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class _AuditOperation {
   final String category;
@@ -19,48 +16,96 @@ class _AuditOperation {
   Duration get duration => (endTime ?? DateTime.now()).difference(startTime);
 }
 
+/// Registra eventos y errores de la app enviándolos a Sentry.
+/// Si Sentry no está activo (sin DSN), vuelca todo a consola con [debugPrint].
 class AppAuditLogger {
   AppAuditLogger._();
 
   static final AppAuditLogger instance = AppAuditLogger._();
-  static const int _maxBytes = 1024 * 1024;
-  Future<void> _writeChain = Future<void>.value();
   final Map<String, _AuditOperation> _pendingOps = {};
 
-  Future<File> _file() async {
-    final directory = await getApplicationDocumentsDirectory();
-    return File(
-        '${directory.path}${Platform.pathSeparator}money_manager_audit.log');
+  bool get _sentryEnabled => Sentry.isEnabled;
+
+  void _logStart(String module, String action, Map<String, dynamic>? data) {
+    if (_sentryEnabled) {
+      Sentry.addBreadcrumb(
+        Breadcrumb(
+          type: 'default',
+          category: module,
+          message: '[START] $action',
+          data: data ?? const {},
+          level: SentryLevel.info,
+        ),
+      );
+    }
+    debugPrint('[$module][START] $action${data == null || data.isEmpty ? '' : ' | $data'}');
   }
 
-  void _write(String entry) {
-    _writeChain = _writeChain.catchError((_) {}).then((_) async {
-      final file = await _file();
-      if (await file.exists() && await file.length() >= _maxBytes) {
-        final content = await file.readAsString();
-        final keepFrom = content.length ~/ 2;
-        final lineStart = content.indexOf('\n', keepFrom);
-        await file.writeAsString(
-          lineStart >= 0 ? content.substring(lineStart + 1) : '',
-          flush: true,
+  void _logEnd(
+    String module,
+    String action,
+    int ms,
+    String? result,
+    Object? error,
+    StackTrace? stack,
+  ) {
+    if (error != null) {
+      if (_sentryEnabled) {
+        Sentry.captureException(
+          error,
+          stackTrace: stack,
+          withScope: (scope) {
+            scope.setTag('module', module);
+            scope.setTag('action', action);
+          },
         );
       }
-      await file.writeAsString(entry, mode: FileMode.append, flush: true);
-    });
+      debugPrint('[$module][END] $action (${ms}ms)\n  ERROR: $error');
+      return;
+    }
+    if (_sentryEnabled) {
+      Sentry.addBreadcrumb(
+        Breadcrumb(
+          type: 'default',
+          category: module,
+          message: '[END] $action (${ms}ms)',
+          data: result == null ? const {} : {'result': result},
+          level: SentryLevel.debug,
+        ),
+      );
+    }
+    debugPrint('[$module][END] $action (${ms}ms)${result == null ? '' : ' → $result'}');
   }
 
   /// Registra un evento puntual.
   void event(String module, String action,
       {Map<String, dynamic>? data, Object? error, StackTrace? stack}) {
-    final ts = DateTime.now().toIso8601String();
-    final buf = StringBuffer('[$ts][$module] $action');
-    if (data != null && data.isNotEmpty) {
-      buf.write(' | ${jsonEncode(data)}');
+    if (error != null) {
+      if (_sentryEnabled) {
+        Sentry.captureException(
+          error,
+          stackTrace: stack,
+          withScope: (scope) {
+            scope.setTag('module', module);
+            scope.setTag('action', action);
+            if (data != null) scope.setContexts('data', data);
+          },
+        );
+      }
+      debugPrint('[$module] $action | $data\n  ERROR: $error');
+      return;
     }
-    if (error != null) buf.write('\n  ERROR: $error');
-    if (stack != null) buf.write('\n  STACK: $stack');
-    buf.write('\n');
-    _write(buf.toString());
+    if (_sentryEnabled) {
+      Sentry.addBreadcrumb(
+        Breadcrumb(
+          type: 'default',
+          category: module,
+          message: action,
+          data: data ?? const {},
+        ),
+      );
+    }
+    debugPrint('[$module] $action${data == null || data.isEmpty ? '' : ' | $data'}');
   }
 
   /// Inicia una operación con tracking de duración.
@@ -68,13 +113,7 @@ class AppAuditLogger {
   String startOp(String module, String action,
       {Map<String, dynamic>? data}) {
     final id = '${DateTime.now().microsecondsSinceEpoch}-${action.hashCode}';
-    final ts = DateTime.now().toIso8601String();
-    final buf = StringBuffer('[$ts][$module][START] $action');
-    if (data != null && data.isNotEmpty) {
-      buf.write(' | ${jsonEncode(data)}');
-    }
-    buf.write('\n');
-    _write(buf.toString());
+    _logStart(module, action, data);
     _pendingOps[id] = _AuditOperation(
       category: module,
       action: action,
@@ -86,18 +125,18 @@ class AppAuditLogger {
   /// Finaliza una operación y registra su duración.
   void endOp(String id, {String? result, Object? error, StackTrace? stack}) {
     final op = _pendingOps.remove(id);
-    final ts = DateTime.now().toIso8601String();
     final duration = op != null
         ? op.duration
         : const Duration(milliseconds: 0);
     final ms = duration.inMilliseconds;
-    final buf = StringBuffer(
-        '[$ts][${op?.category ?? '?'}][END  ] ${op?.action ?? '?'} (${ms}ms)');
-    if (result != null) buf.write(' → $result');
-    if (error != null) buf.write('\n  ERROR: $error');
-    if (stack != null) buf.write('\n  STACK: $stack');
-    buf.write('\n');
-    _write(buf.toString());
+    _logEnd(
+      op?.category ?? '?',
+      op?.action ?? '?',
+      ms,
+      result,
+      error,
+      stack,
+    );
   }
 
   /// Registra inicio + fin de una operación síncrona simple.
@@ -110,31 +149,30 @@ class AppAuditLogger {
     endOp(id, result: result, error: error, stack: stack);
   }
 
-  /// Registra un error/exception de forma estructurada.
-  /// Útil para capturar errores globales o errores traducidos al usuario.
+  /// Registra un error/exception a Sentry (o consola si no hay DSN).
   void error(String module, Object error,
       {StackTrace? stack, Map<String, dynamic>? data}) {
-    event(
-      module,
-      'ERROR',
-      data: data,
-      error: error,
-      stack: stack,
-    );
+    if (_sentryEnabled) {
+      Sentry.captureException(
+        error,
+        stackTrace: stack,
+        withScope: (scope) {
+          scope.setTag('module', module);
+          if (data != null) scope.setContexts('data', data);
+        },
+      );
+      return;
+    }
+    debugPrint('[$module] ERROR: $error');
+    if (stack != null) debugPrint('  STACK: $stack');
   }
 
-  Future<String> read() async {
-    await _writeChain.catchError((_) {});
-    final file = await _file();
-    return await file.exists() ? file.readAsString() : '';
-  }
+  /// Compatibilidad: ya no se escribe log físico. Retorna vacío.
+  Future<String> read() async => '';
 
-  Future<String> get path async => (await _file()).path;
+  /// Compatibilidad: ya no se escribe log físico.
+  Future<String> get path async => '';
 
-  Future<void> clear() async {
-    await _writeChain.catchError((_) {});
-    final file = await _file();
-    if (await file.exists()) await file.writeAsString('', flush: true);
-  }
+  /// Compatibilidad: ya no se escribe log físico.
+  Future<void> clear() async {}
 }
-
