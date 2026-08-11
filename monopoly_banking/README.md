@@ -50,15 +50,14 @@
 - **Autenticación biométrica** para transferencias grandes (> `$5,000`).
 - **Sonidos y música** de fondo (`audioplayers`) + **anuncios por voz** (`flutter_tts`).
 - **Almacenamiento local cifrado** con Hive + AES (clave guardada en `flutter_secure_storage`).
-- **Transmisión P2P múltiple**: TCP por Wi-Fi, NFC o Bluetooth Low Energy (BLE).
+- **Transmisión P2P sobre red local**: conexión por TCP (WiFi) o WebSocket (WiFi Direct).
 
 ### Modos de conexión
 
-| Transporte | Uso | Prioridad |
+| Transporte | Tecnología | Descripción |
 |---|---|---|
-| **TCP / Wi-Fi** | El banco levanta un servidor en el puerto `8080` y los clientes se conectan por IP local. | Primario |
-| **NFC** | Contacto físico entre teléfonos para traspasos directos. | Alternativo |
-| **BLE** | Descubrimiento y conexión entre dispositivos cercanos. | Respaldo |
+| **WiFi** | TCP + descubrimiento UDP | El banco levanta un servidor TCP y los jugadores se conectan en la red local. |
+| **WiFi Direct** | WebSocket (puerto `7070`) | Conexión directa entre dispositivos sin necesidad de router. |
 
 ---
 
@@ -69,7 +68,7 @@
 | Framework | Flutter (Dart ≥ 3.4) |
 | Estado | `provider` + `ChangeNotifier` |
 | Almacenamiento | Hive cifrado + `flutter_secure_storage` |
-| Red | Sockets TCP, WebSocket propio, `flutter_reactive_ble`, `nfc_manager` |
+| Red | Sockets TCP + descubrimiento UDP, WebSocket (`ws_transport.dart`) |
 | Sonido | `audioplayers`, `flutter_tts` |
 | Servicios en segundo plano | `flutter_background_service` |
 | Monitoreo | `sentry_flutter` + plugin nativo de Android |
@@ -261,7 +260,7 @@ monopoly_banking/
 │   ├── services/                  # Red, transporte, sonido, voz, auditoría
 │   │   └── transports/            # TCP, WebSocket, modelos WS
 │   └── widgets/                   # Widgets reutilizables
-├── android/                       # Proyecto Android (firma, splash, BLE nativo)
+├── android/                       # Proyecto Android (firma, splash)
 ├── windows/                       # Proyecto Windows + instalador Inno Setup
 ├── ios/                           # Proyecto iOS
 ├── assets/                        # Sonidos, íconos, fuentes
@@ -287,8 +286,7 @@ monopoly_banking/
 |---|---|
 | `Connection refused` al conectar | Inicia primero la app del **banco** y verifica que ambos estén en la misma red Wi-Fi. |
 | Error de descifrado de Hive | Borra los datos de la app o reinstálala. |
-| NFC no funciona | Activa NFC en el celular; algunos emuladores no lo soportan. |
-| BLE no encuentra dispositivos | En Android, BLE requiere permiso de **ubicación** para escanear. |
+| WiFi Direct no conecta | Asegúrate de que ambos dispositivos tengan WiFi activo y acércalos. |
 | Errores de build | Ejecuta `flutter clean` y luego `flutter pub get`. |
 | Los crash se ven en la consola pero no en Sentry | Compila con `--dart-define=SENTRY_DSN=<tu_dsn>`. |
 
