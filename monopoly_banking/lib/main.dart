@@ -5,6 +5,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:window_manager/window_manager.dart';
 import 'app.dart';
 import 'services/app_audit_logger.dart';
+import 'services/data_repair_service.dart';
 import 'services/error_translator_service.dart';
 import 'services/foreground_service.dart';
 import 'services/hive_service.dart';
@@ -71,6 +72,7 @@ Future<void> runAppWithSentry() async {
 
   try {
     await HiveService.init();
+    await DataRepairService.run();
     await SoundService.init();
     await ErrorTranslatorService().init();
     await BankForegroundService().init();

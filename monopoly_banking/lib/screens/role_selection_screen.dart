@@ -107,7 +107,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> with TickerPr
     }
     await session.createSession(
       role: role,
-      avatarId: '👤',
+      avatarId: kDefaultAvatar,
       colorId: '0',
       initialBalance: 0,
       name: '',

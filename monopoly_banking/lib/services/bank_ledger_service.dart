@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 
+import 'package:money_manager/core/constants.dart';
 import 'package:money_manager/models/transaction_model.dart';
 import 'package:money_manager/services/bank_settings_service.dart';
 import 'package:money_manager/services/hive_service.dart';
+import 'package:money_manager/services/text_repair.dart';
 
 class BankLedgerException implements Exception {
   final String message;
@@ -544,6 +546,24 @@ class BankLedgerService {
     final accounts = _readAccounts();
     accounts[account.playerId] = account.toMap();
     await HiveService.settingsBox.put(_accountsKey, accounts);
+  }
+
+  /// Replaces stored player avatars that were persisted corrupted by the
+  /// mis-encoded build. Returns how many accounts were repaired.
+  Future<int> repairCorruptedAvatars() async {
+    final accounts = _readAccounts();
+    var repaired = 0;
+    for (final account in accounts.values) {
+      if (account is! Map) continue;
+      final avatar = account['avatarId'];
+      if (avatar is! String || !TextRepair.hasMojibake(avatar)) continue;
+      account['avatarId'] = kDefaultAvatar;
+      repaired++;
+    }
+    if (repaired == 0) return 0;
+    await HiveService.settingsBox.put(_accountsKey, accounts);
+    _invalidateAccountCache();
+    return repaired;
   }
 
   Future<BankLedgerResult> _record({

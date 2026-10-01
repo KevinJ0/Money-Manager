@@ -17,6 +17,10 @@ const kBorder = Color(0xFF1F2937);
 
 const kMoneySymbol = '\$';
 
+/// Avatar used when a player has not picked one, and the value restored by
+/// `DataRepairService` when a stored avatar turns out to be corrupted.
+const kDefaultAvatar = '\u{1F464}';
+
 const kInitialBalance = 2000.0;
 const kPassGoAmount = 200.0;
 
