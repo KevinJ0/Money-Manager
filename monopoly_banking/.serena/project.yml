@@ -121,13 +121,13 @@ initial_prompt: |
   Proyecto: money_manager - App de banca digital para Money Manager (offline P2P).
 
   Subagentes disponibles (modos):
-  - flutter-runner: CompilaciÃ³n, ejecuciÃ³n, testeo y deploy
-  - p2p-networking: BLE, NFC, TCP sockets
+  - flutter-runner: Compilación, ejecución, testeo y deploy
+  - p2p-networking: TCP sockets, descubrimiento UDP, WebSocket
   - ui-designer: Pantallas, widgets, animaciones
   - data-layer: Hive, modelos, persistencia
-  - bank-logic: LÃ³gica de transferencias, vault, wallet
+  - bank-logic: Lógica de transferencias, vault, wallet
 
-  ActÃ­valos con: --add-mode <nombre> o --mode <nombre>
+  Actívalos con: --add-mode <nombre> o --mode <nombre>
 
 # time budget (seconds) per tool call for the retrieval of additional symbol information
 # such as docstrings or parameter information.
@@ -135,7 +135,7 @@ initial_prompt: |
 # If null or missing, use the setting from the global configuration.
 symbol_info_budget:
 
-# list of regex patterns which, when matched, mark a memory entry as readâ€‘only.
+# list of regex patterns which, when matched, mark a memory entry as read-only.
 # Extends the list from the global configuration, merging the two lists.
 read_only_memory_patterns: []
 
