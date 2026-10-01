@@ -7,3 +7,6 @@ ws_connect_button_original.dart
 
 # Artefactos generados por el SDK nativo de Sentry (crashpad)
 .sentry-native/
+
+# Git hooks (se activan localmente con: git config core.hooksPath .githooks)
+/.githooks/
