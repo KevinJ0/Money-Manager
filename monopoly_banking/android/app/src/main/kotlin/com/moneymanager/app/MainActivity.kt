@@ -155,7 +155,7 @@ class MainActivity : FlutterActivity() {
                                     data = android.net.Uri.parse("package:$packageName")
                                 })
                             } catch (e: Exception) {
-                                Log.e("MainActivity", "Error solicitando ignorar optimizaciÃ³n", e)
+                                Log.e("MainActivity", "Error solicitando ignorar optimización", e)
                             }
                         }
                         result.success(true)
@@ -244,7 +244,7 @@ class MainActivity : FlutterActivity() {
                                 data = android.net.Uri.parse("package:$packageName")
                             })
                         } catch (e: Exception) {
-                            Log.e("MainActivity", "Error solicitando ignorar optimizaciÃ³n", e)
+                            Log.e("MainActivity", "Error solicitando ignorar optimización", e)
                         }
                     }
                     result.success(true)
@@ -268,7 +268,7 @@ class MainActivity : FlutterActivity() {
                 @Suppress("DEPRECATION")
                 adapter.disable()
             }
-            // Esperar hasta que el adaptador estÃ© apagado (mÃ¡ximo 4s)
+            // Esperar hasta que el adaptador esté apagado (máximo 4s)
             var attempts = 0
             while (adapter.isEnabled && attempts < 20) {
                 Thread.sleep(200)
@@ -315,7 +315,7 @@ class MainActivity : FlutterActivity() {
                         success = refreshMethod.invoke(gatt) as Boolean
                         Log.d("MainActivity", "refresh() en $deviceId: $success")
                     } catch (e: Exception) {
-                        Log.e("MainActivity", "Error refrescando cachÃ© GATT", e)
+                        Log.e("MainActivity", "Error refrescando caché GATT", e)
                     }
                     gatt.disconnect()
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
